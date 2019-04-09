@@ -58,3 +58,20 @@ exports.sendAdminNotification = functions.database.ref('/history/{pushId}')
 				});
 		}
 	});
+
+exports.sendUnlockArduino = functions.database.ref('/history/{pushId}')
+	.onCreate((snapshot, context) => {
+		const history = snapshot.val();
+		console.log(history.date);
+		if(history.status === 1){
+			const payload = {data:"1"};
+			return admin.messaging().sendToTopic("Unlock", payload)
+			    .then(function(response){
+			         console.log('Notification sent successfully:',response);
+			         return null;
+			    }) 
+			    .catch(function(error){
+			         console.log('Notification sent failed:',error);
+				});
+		}
+	});
